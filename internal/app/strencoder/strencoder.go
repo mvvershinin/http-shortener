@@ -1,9 +1,16 @@
 package strencoder
 
-import "encoding/base32"
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"strings"
+)
 
 func EncodeStr(stringToEncode string) string {
-	str := base32.StdEncoding.EncodeToString([]byte(stringToEncode))
+	hash := sha256.New()
+	hash.Write([]byte(stringToEncode))
+	hashSum := hash.Sum(nil)
+	hashHex := hex.EncodeToString(hashSum)
 
-	return str
+	return strings.ToLower(hashHex)
 }

@@ -2,8 +2,9 @@ package handler
 
 import (
 	"fmt"
-	"http-shortener/internal/app/config"
-	"http-shortener/internal/app/strencoder"
+	"github.com/mvvershinin/http-shortener/internal/app/config"
+	"github.com/mvvershinin/http-shortener/internal/app/strencoder"
+	"io"
 	"net/http"
 )
 
@@ -21,10 +22,13 @@ func badRequestHandler(res http.ResponseWriter) {
 }
 
 func postHandler(res http.ResponseWriter, req *http.Request) {
-	//todo post body encode
-	str := strencoder.EncodeStr(cfg.DefaultUrl)
+
+	str, _ := io.ReadAll(req.Body)
+	encoded := strencoder.EncodeStr(string(str))
+	link := fmt.Sprintf("%s/%s", cfg.GetServerUrl(), encoded)
+	//str := strencoder.EncodeStr(cfg.DefaultUrl)
 	res.Header().Add("content-type", "text/plain")
-	var _, err = res.Write([]byte(fmt.Sprintf("%v", str)))
+	var _, err = res.Write([]byte(fmt.Sprintf("%v", link)))
 	if err != nil {
 		return
 	}
@@ -39,12 +43,20 @@ func getHandler(res http.ResponseWriter, req *http.Request) {
 }
 
 func MainHandler(res http.ResponseWriter, req *http.Request) {
+	contentType := req.Header.Get("Content-Type")
+
+	if contentType != "text/plain" {
+		badRequestHandler(res)
+
+		return
+	}
 
 	if http.MethodGet != req.Method && req.Method != http.MethodPost {
 		badRequestHandler(res)
 
 		return
 	}
+
 	if req.Method == http.MethodPost {
 		postHandler(res, req)
 
