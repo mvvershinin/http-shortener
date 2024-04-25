@@ -24,7 +24,7 @@ func badRequestHandler(res http.ResponseWriter) {
 func postHandler(res http.ResponseWriter, req *http.Request) {
 	str, _ := io.ReadAll(req.Body)
 	encoded := strencoder.EncodeStr(string(str))
-	link := fmt.Sprintf("%s/%s", cfg.GetServerURL(), encoded)
+	link := fmt.Sprintf("%s/%s", cfg.GetServerLINK(), encoded)
 	res.Header().Add("content-type", "text/plain")
 	res.WriteHeader(http.StatusCreated)
 	var _, err = res.Write([]byte(fmt.Sprintf("%v", link)))
