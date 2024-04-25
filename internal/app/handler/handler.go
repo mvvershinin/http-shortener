@@ -6,6 +6,7 @@ import (
 	"github.com/mvvershinin/http-shortener/internal/app/strencoder"
 	"io"
 	"net/http"
+	"strings"
 )
 
 const errorMessage = "Bad Request: Only requests GEt and POST are allowed."
@@ -23,7 +24,7 @@ func badRequestHandler(res http.ResponseWriter) {
 
 func postHandler(res http.ResponseWriter, req *http.Request) {
 	str, _ := io.ReadAll(req.Body)
-	encoded := strencoder.EncodeStr(string(str))
+	encoded := strencoder.Base64Encode(string(str))
 	link := fmt.Sprintf("%s/%s", cfg.GetServerLINK(), encoded)
 	res.Header().Add("content-type", "text/plain")
 	res.WriteHeader(http.StatusCreated)
@@ -34,8 +35,10 @@ func postHandler(res http.ResponseWriter, req *http.Request) {
 }
 
 func getHandler(res http.ResponseWriter, req *http.Request) {
-	//todo get url part decode
-	str := cfg.DefaultURL
+	str, err := strencoder.Base64Decode(strings.TrimLeft(req.URL.Path, "/"))
+	if err != nil {
+		badRequestHandler(res)
+	}
 	res.Header().Add("content-type", "text/plain")
 	res.Header().Add("Location", str)
 	res.WriteHeader(http.StatusTemporaryRedirect)

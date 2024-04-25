@@ -1,16 +1,24 @@
 package strencoder
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"strings"
+	"encoding/base64"
+	"fmt"
 )
 
-func EncodeStr(stringToEncode string) string {
-	hash := sha256.New()
-	hash.Write([]byte(stringToEncode))
-	hashSum := hash.Sum(nil)
-	hashHex := hex.EncodeToString(hashSum)
+func Base64Encode(str string) string {
+	enc := base64.StdEncoding.EncodeToString([]byte(str))
+	fmt.Printf("%s\n", enc)
+	return enc
+	//todo return err
+}
 
-	return strings.ToLower(hashHex)
+func Base64Decode(str string) (string, error) {
+	fmt.Println(str)
+	dec, err := base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		return str, err
+	}
+	fmt.Printf("%s\n", string(dec))
+	return string(dec), nil
+	//todo return err
 }
