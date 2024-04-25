@@ -7,34 +7,52 @@ import (
 	"net/http"
 )
 
+const errorMessage = "Bad Request: Only requests GEt and POST are allowed."
+
+var cfg = config.GetConfig()
+
+func badRequestHandler(res http.ResponseWriter) {
+	res.WriteHeader(http.StatusBadRequest)
+
+	_, err := res.Write([]byte(errorMessage))
+	if err != nil {
+		return
+	}
+}
+
+func postHandler(res http.ResponseWriter, req *http.Request) {
+	//todo post body encode
+	str := strencoder.EncodeStr(cfg.DefaultUrl)
+	res.Header().Add("content-type", "text/plain")
+	var _, err = res.Write([]byte(fmt.Sprintf("%v", str)))
+	if err != nil {
+		return
+	}
+}
+
+func getHandler(res http.ResponseWriter, req *http.Request) {
+	//todo get url part decode
+	str := cfg.DefaultUrl
+	res.Header().Add("content-type", "text/plain")
+	res.Header().Add("Location", str)
+	res.WriteHeader(http.StatusTemporaryRedirect)
+}
+
 func MainHandler(res http.ResponseWriter, req *http.Request) {
-	cfg := config.GetConfig()
+
 	if http.MethodGet != req.Method && req.Method != http.MethodPost {
-		res.WriteHeader(http.StatusBadRequest)
-		errorMessage := "Bad Request: Only requests GEt and POST are allowed."
-		_, err := res.Write([]byte(errorMessage))
-		if err != nil {
-			return
-		}
+		badRequestHandler(res)
+
 		return
 	}
 	if req.Method == http.MethodPost {
-		//todo post body encode
-		str := strencoder.EncodeStr(cfg.DefaultUrl)
-		res.Header().Add("content-type", "text/plain")
-		var _, err = res.Write([]byte(fmt.Sprintf("%v", str)))
-		if err != nil {
-			return
-		}
+		postHandler(res, req)
+
 		return
 	}
 	if req.Method == http.MethodGet {
-		//todo get url part decode
-		res.Header().Add("content-type", "text/plain")
-		_, err := res.Write([]byte(cfg.DefaultUrl))
-		if err != nil {
-			return
-		}
+		getHandler(res, req)
+
 		return
 	}
 }
