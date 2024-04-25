@@ -11,7 +11,7 @@ func main() {
 	cfg := config.GetConfig()
 	mux := http.NewServeMux()
 	mux.HandleFunc(`/`, handler.MainHandler)
-	fmt.Println(fmt.Sprintf("listen %s", cfg.GetServerUrl()))
+	fmt.Printf("listen %s\r\n", cfg.GetServerUrl())
 	err := http.ListenAndServe(cfg.GetServerUrl(), mux)
 	if err != nil {
 		panic(err)
