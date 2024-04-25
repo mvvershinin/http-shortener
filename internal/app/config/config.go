@@ -6,7 +6,7 @@ import (
 )
 
 const serverAddress = "localhost"
-const port = 8088
+const port = 8080
 const defaultLink = "https://practicum.yandex.ru"
 
 type Config struct {
