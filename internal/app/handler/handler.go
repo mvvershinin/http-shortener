@@ -24,7 +24,7 @@ func badRequestHandler(res http.ResponseWriter) {
 func postHandler(res http.ResponseWriter, req *http.Request) {
 	str, _ := io.ReadAll(req.Body)
 	encoded := strencoder.EncodeStr(string(str))
-	link := fmt.Sprintf("%s/%s", cfg.GetServerUrl(), encoded)
+	link := fmt.Sprintf("%s/%s", cfg.GetServerURL(), encoded)
 	res.Header().Add("content-type", "text/plain")
 	res.WriteHeader(http.StatusCreated)
 	var _, err = res.Write([]byte(fmt.Sprintf("%v", link)))
@@ -35,7 +35,7 @@ func postHandler(res http.ResponseWriter, req *http.Request) {
 
 func getHandler(res http.ResponseWriter, req *http.Request) {
 	//todo get url part decode
-	str := cfg.DefaultUrl
+	str := cfg.DefaultURL
 	res.Header().Add("content-type", "text/plain")
 	res.Header().Add("Location", str)
 	res.WriteHeader(http.StatusTemporaryRedirect)

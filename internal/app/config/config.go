@@ -12,10 +12,10 @@ const defaultLink = "https://practicum.yandex.ru"
 type Config struct {
 	ServerAddress string
 	ServerPort    string
-	DefaultUrl    string
+	DefaultURL    string
 }
 
-func (c Config) GetServerUrl() string {
+func (c Config) GetServerURL() string {
 	return fmt.Sprintf("%s:%s", c.ServerAddress, c.ServerPort)
 }
 
@@ -23,7 +23,7 @@ func GetConfig() Config {
 	c := Config{
 		ServerAddress: serverAddress,
 		ServerPort:    strconv.Itoa(port),
-		DefaultUrl:    defaultLink,
+		DefaultURL:    defaultLink,
 	}
 
 	return c
