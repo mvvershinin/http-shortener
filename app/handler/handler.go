@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fmt"
-	"github.com/mvvershinin/http-shortener/app/config"
-	"github.com/mvvershinin/http-shortener/app/strencoder"
+	"http-shortener/internal/app/config"
+	"http-shortener/internal/app/strencoder"
 	"net/http"
 )
 

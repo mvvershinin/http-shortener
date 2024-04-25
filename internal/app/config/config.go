@@ -16,7 +16,7 @@ type Config struct {
 }
 
 func (c Config) GetServerUrl() string {
-	return fmt.Sprintf("%s:%d", c.ServerAddress, c.ServerPort)
+	return fmt.Sprintf("%s:%s", c.ServerAddress, c.ServerPort)
 }
 
 func GetConfig() Config {

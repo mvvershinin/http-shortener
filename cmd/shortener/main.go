@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/mvvershinin/http-shortener/app/config"
-	"github.com/mvvershinin/http-shortener/internal/app/handler"
+	"http-shortener/app/handler"
+	"http-shortener/internal/app/config"
 	"net/http"
 )
 
