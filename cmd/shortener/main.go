@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"http-shortener/app/handler"
 	"http-shortener/internal/app/config"
+	"http-shortener/internal/app/handler"
 	"net/http"
 )
 
