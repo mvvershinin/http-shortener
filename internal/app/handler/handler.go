@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"github.com/mvvershinin/http-shortener/internal/app/config"
+	"github.com/mvvershinin/http-shortener/config"
 	"github.com/mvvershinin/http-shortener/internal/app/strencoder"
 	"io"
 	"net/http"

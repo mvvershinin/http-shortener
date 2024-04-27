@@ -2,7 +2,6 @@ package strencoder
 
 import (
 	"encoding/base64"
-	"fmt"
 )
 
 func Base64Encode(str string) string {
@@ -12,7 +11,6 @@ func Base64Encode(str string) string {
 }
 
 func Base64Decode(str string) (string, error) {
-	fmt.Println(str)
 	dec, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
 		return str, err
