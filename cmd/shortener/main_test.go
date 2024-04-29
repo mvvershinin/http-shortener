@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/mvvershinin/http-shortener/config"
 	"github.com/mvvershinin/http-shortener/internal/app/handler"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -42,8 +43,9 @@ func TestHandlerGetSuccess(t *testing.T) {
 }
 
 func TestHandlerPostSuccess(t *testing.T) {
-	successBody := "http://localhost:8080/aHR0cHM6Ly95YW5kZXgucnUv"
-	requestBody := "https://yandex.ru/"
+	cfg := config.GetConfig()
+	successBody := cfg.GetServerLINK() + "/aHR0cHM6Ly95YW5kZXgucnUv"
+	requestBody := "hsttps://yandex.ru/"
 	contentType := "text/plain"
 	testCases := []struct {
 		method              string
