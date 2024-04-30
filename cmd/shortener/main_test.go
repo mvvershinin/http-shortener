@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"github.com/mvvershinin/http-shortener/config"
 	"github.com/mvvershinin/http-shortener/internal/app/handler"
 	"github.com/stretchr/testify/assert"
@@ -44,8 +45,9 @@ func TestHandlerGetSuccess(t *testing.T) {
 
 func TestHandlerPostSuccess(t *testing.T) {
 	cfg := config.GetConfig()
-	successBody := cfg.GetServerLINK() + "/aHR0cHM6Ly95YW5kZXgucnUv"
 	requestBody := "hsttps://yandex.ru/"
+	str := base64.StdEncoding.EncodeToString([]byte(requestBody))
+	successBody := cfg.GetServerLINK() + "/" + str
 	contentType := "text/plain"
 	testCases := []struct {
 		method              string
