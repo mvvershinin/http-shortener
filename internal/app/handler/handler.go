@@ -16,7 +16,7 @@ var Cfg config.Config
 func GetRouter(cfg config.Config) *chi.Mux {
 	Cfg = cfg
 	router := chi.NewRouter()
-	router.Route(Cfg.ApiPrefix, func(router chi.Router) {
+	router.Route(Cfg.APIPrefix, func(router chi.Router) {
 		router.Get("/{uid}", GetHandler)
 		router.Post("/", PostHandler)
 	})

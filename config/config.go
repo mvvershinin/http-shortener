@@ -6,23 +6,23 @@ import (
 
 const ServerProtocol = "http://"
 const ServerAddress = "localhost:8888"
-const ApiPrefix = "/api"
+const APIPrefix = "/api"
 
 type Config struct {
 	ServerProtocol string
 	ServerAddress  string
-	ApiPrefix      string
+	APIPrefix      string
 }
 
 func (c Config) GetServerLINK() string {
-	return fmt.Sprintf("%s%s%s", c.ServerProtocol, c.ServerAddress, c.ApiPrefix)
+	return fmt.Sprintf("%s%s%s", c.ServerProtocol, c.ServerAddress, c.APIPrefix)
 }
 
 func GetConfig() Config {
 	c := Config{
 		ServerProtocol: ServerProtocol,
 		ServerAddress:  ServerAddress,
-		ApiPrefix:      ApiPrefix,
+		APIPrefix:      APIPrefix,
 	}
 
 	return c

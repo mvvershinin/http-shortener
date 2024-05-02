@@ -12,7 +12,7 @@ var Cfg = config.GetConfig()
 
 func init() {
 	flag.StringVar(&Cfg.ServerAddress, "a", Cfg.ServerAddress, "The address and port to listen on")
-	flag.StringVar(&Cfg.ApiPrefix, "b", Cfg.ApiPrefix, "Api prefix to listen on")
+	flag.StringVar(&Cfg.APIPrefix, "b", Cfg.APIPrefix, "Api prefix to listen on")
 }
 
 func main() {
