@@ -2,14 +2,15 @@ package main
 
 import (
 	"github.com/mvvershinin/http-shortener/config"
-	"github.com/mvvershinin/http-shortener/internal/app/router"
+	"github.com/mvvershinin/http-shortener/internal/app/handler"
 	"net/http"
 )
 
 func main() {
 	cfg := config.GetConfig()
-	r := router.GetRouter()
-	err := http.ListenAndServe(cfg.GetServerURL(), r)
+	mux := http.NewServeMux()
+	mux.HandleFunc(`/`, handler.MainHandler)
+	err := http.ListenAndServe(cfg.GetServerURL(), mux)
 	if err != nil {
 		panic(err)
 	}
