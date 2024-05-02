@@ -2,27 +2,26 @@ package handler
 
 import (
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"github.com/mvvershinin/http-shortener/config"
 	"github.com/mvvershinin/http-shortener/internal/app/strencoder"
 	"io"
 	"net/http"
-	"strings"
 )
 
-const errorMessage = "Bad Request: Only requests GEt and POST are allowed."
+const errorMessage = "Bad Request: Something wrong happened."
 
 var cfg = config.GetConfig()
 
-func badRequestHandler(res http.ResponseWriter) {
+func BadRequestHandler(res http.ResponseWriter, r *http.Request) {
 	res.WriteHeader(http.StatusBadRequest)
-
 	_, err := res.Write([]byte(errorMessage))
 	if err != nil {
 		return
 	}
 }
 
-func postHandler(res http.ResponseWriter, req *http.Request) {
+func PostHandler(res http.ResponseWriter, req *http.Request) {
 	str, _ := io.ReadAll(req.Body)
 	encoded := strencoder.Base64Encode(string(str))
 	link := fmt.Sprintf("%s/%s", cfg.GetServerLINK(), encoded)
@@ -34,31 +33,13 @@ func postHandler(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func getHandler(res http.ResponseWriter, req *http.Request) {
-	str, err := strencoder.Base64Decode(strings.TrimLeft(req.URL.Path, "/"))
+func GetHandler(res http.ResponseWriter, req *http.Request) {
+	uid := chi.URLParam(req, "uid")
+	str, err := strencoder.Base64Decode(uid)
 	if err != nil {
-		badRequestHandler(res)
+		BadRequestHandler(res, req)
 	}
 	res.Header().Add("content-type", "text/plain")
 	res.Header().Add("Location", str)
 	res.WriteHeader(http.StatusTemporaryRedirect)
-}
-
-func MainHandler(res http.ResponseWriter, req *http.Request) {
-	if http.MethodGet != req.Method && req.Method != http.MethodPost {
-		badRequestHandler(res)
-
-		return
-	}
-
-	if req.Method == http.MethodPost {
-		postHandler(res, req)
-
-		return
-	}
-	if req.Method == http.MethodGet {
-		getHandler(res, req)
-
-		return
-	}
 }
