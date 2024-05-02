@@ -11,7 +11,20 @@ import (
 
 const errorMessage = "Bad Request: Something wrong happened."
 
-var cfg = config.GetConfig()
+var Cfg config.Config
+
+func GetRouter(cfg config.Config) *chi.Mux {
+	Cfg = cfg
+	router := chi.NewRouter()
+	router.Route(Cfg.ApiPrefix, func(router chi.Router) {
+		router.Get("/{uid}", GetHandler)
+		router.Post("/", PostHandler)
+	})
+	router.NotFound(BadRequestHandler)
+	router.MethodNotAllowed(BadRequestHandler)
+
+	return router
+}
 
 func BadRequestHandler(res http.ResponseWriter, r *http.Request) {
 	res.WriteHeader(http.StatusBadRequest)
@@ -24,7 +37,7 @@ func BadRequestHandler(res http.ResponseWriter, r *http.Request) {
 func PostHandler(res http.ResponseWriter, req *http.Request) {
 	str, _ := io.ReadAll(req.Body)
 	encoded := strencoder.Base64Encode(string(str))
-	link := fmt.Sprintf("%s/%s", cfg.GetServerLINK(), encoded)
+	link := fmt.Sprintf("%s/%s", Cfg.GetServerLINK(), encoded)
 	res.Header().Add("content-type", "text/plain")
 	res.WriteHeader(http.StatusCreated)
 	var _, err = res.Write([]byte(fmt.Sprintf("%v", link)))
