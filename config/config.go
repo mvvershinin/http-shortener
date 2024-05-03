@@ -3,17 +3,19 @@ package config
 import (
 	"flag"
 	"fmt"
+	"github.com/caarlos0/env/v6"
+	"log"
 	"strings"
 )
 
 var ServerProtocol = "http://"
 var ServerAddress = "localhost:8080"
-var APIPrefix = "/"
+var APIPrefix = ""
 
 type Config struct {
 	ServerProtocol string
-	ServerAddress  string
-	APIPrefix      string
+	ServerAddress  string `env:"SERVER_ADDRESS"`
+	APIPrefix      string `env:"BASE_URL"`
 }
 
 func (c Config) GetServerPath() string {
@@ -25,14 +27,25 @@ func (c Config) GetServerLINK() string {
 }
 
 func GetConfig() Config {
-	flag.StringVar(&ServerAddress, "a", ServerAddress, "The address and port to listen on")
-	flag.StringVar(&APIPrefix, "b", APIPrefix, "Api prefix to listen on")
+	cfg := Config{
+		ServerProtocol: ServerProtocol,
+		ServerAddress:  ServerAddress,
+		APIPrefix:      APIPrefix,
+	}
+
+	err := env.Parse(&cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "The address and port to listen on")
+	flag.StringVar(&cfg.APIPrefix, "b", cfg.APIPrefix, "Api prefix to listen on")
 	flag.Parse()
 
 	c := Config{
-		ServerProtocol: ServerProtocol,
-		ServerAddress:  ServerAddress,
-		APIPrefix:      "/" + strings.Trim(APIPrefix, "/"),
+		ServerProtocol: cfg.ServerProtocol,
+		ServerAddress:  cfg.ServerAddress,
+		APIPrefix:      "/" + strings.Trim(cfg.APIPrefix, "/"),
 	}
 
 	return c
