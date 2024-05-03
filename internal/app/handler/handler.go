@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/mvvershinin/http-shortener/config"
 	"github.com/mvvershinin/http-shortener/internal/app/strencoder"
@@ -17,7 +16,7 @@ var Cfg config.Config
 func GetRouter(cfg config.Config) *chi.Mux {
 	Cfg = cfg
 	router := chi.NewRouter()
-	router.Route(fmt.Sprintf("%s", Cfg.APIPrefix), func(r chi.Router) {
+	router.Route(Cfg.APIPrefix, func(r chi.Router) {
 		r.Get("/{uid}", GetHandler)
 		r.Post("/", PostHandler)
 	})
