@@ -13,14 +13,6 @@ const errorMessage = "Bad Request: Something wrong happened."
 
 var Cfg config.Config
 
-type EncodedData struct {
-	Result string `json:"result"`
-}
-
-type DecodedData struct {
-	Url string `json:"url"`
-}
-
 func GetRouter(cfg config.Config) *chi.Mux {
 	Cfg = cfg
 	router := chi.NewRouter()
@@ -29,7 +21,7 @@ func GetRouter(cfg config.Config) *chi.Mux {
 	fmt.Printf("/%s", config.GetAPIPrefixString(Cfg.APIPrefix))
 	fmt.Println("!!!")
 	router.Get(fmt.Sprintf("/%s{uid}", config.GetAPIPrefixString(Cfg.APIPrefix)), GetHandler)
-	router.Post(fmt.Sprintf("/%s", config.GetAPIPrefixString(Cfg.APIPrefix)), PostHandler)
+	router.Post(fmt.Sprintf("/%s", Cfg.APIPrefix), PostHandler)
 	router.NotFound(BadRequestHandler)
 	router.MethodNotAllowed(BadRequestHandler)
 
@@ -37,6 +29,8 @@ func GetRouter(cfg config.Config) *chi.Mux {
 }
 
 func BadRequestHandler(res http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Host)
+	fmt.Println(r.URL)
 	res.WriteHeader(http.StatusBadRequest)
 	_, err := res.Write([]byte(errorMessage))
 	if err != nil {
