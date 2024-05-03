@@ -10,11 +10,11 @@ func Base64Encode(str string) string {
 	return enc
 }
 
-func Base64Decode(str string) (string, error) {
+func Base64Decode(str string) ([]byte, error) {
 	dec, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
-		return str, err
+		return nil, err
 	}
 
-	return string(dec), nil
+	return dec, nil
 }

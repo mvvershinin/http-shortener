@@ -2,11 +2,12 @@ package config
 
 import (
 	"fmt"
+	"strings"
 )
 
 const ServerProtocol = "http://"
-const ServerAddress = "localhost:8888"
-const APIPrefix = "/api"
+const ServerAddress = "localhost:8080"
+const APIPrefix = ""
 
 type Config struct {
 	ServerProtocol string
@@ -15,7 +16,7 @@ type Config struct {
 }
 
 func (c Config) GetServerLINK() string {
-	return fmt.Sprintf("%s%s%s", c.ServerProtocol, c.ServerAddress, c.APIPrefix)
+	return fmt.Sprintf("%s%s/%s", c.ServerProtocol, c.ServerAddress, GetAPIPrefixString(c.APIPrefix))
 }
 
 func GetConfig() Config {
@@ -26,4 +27,12 @@ func GetConfig() Config {
 	}
 
 	return c
+}
+
+func GetAPIPrefixString(prefix string) string {
+	if len(prefix) > 1 {
+		return strings.Trim(prefix, "/")
+	} else {
+		return ""
+	}
 }

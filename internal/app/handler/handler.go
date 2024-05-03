@@ -13,13 +13,19 @@ const errorMessage = "Bad Request: Something wrong happened."
 
 var Cfg config.Config
 
+type EncodedData struct {
+	Result string `json:"result"`
+}
+
+type DecodedData struct {
+	Url string `json:"url"`
+}
+
 func GetRouter(cfg config.Config) *chi.Mux {
 	Cfg = cfg
 	router := chi.NewRouter()
-	router.Route(Cfg.APIPrefix, func(router chi.Router) {
-		router.Get("/{uid}", GetHandler)
-		router.Post("/", PostHandler)
-	})
+	router.Get(fmt.Sprintf("/%s/{uid}", config.GetAPIPrefixString(Cfg.APIPrefix)), GetHandler)
+	router.Post(fmt.Sprintf("/%s", config.GetAPIPrefixString(Cfg.APIPrefix)), PostHandler)
 	router.NotFound(BadRequestHandler)
 	router.MethodNotAllowed(BadRequestHandler)
 
@@ -37,10 +43,10 @@ func BadRequestHandler(res http.ResponseWriter, r *http.Request) {
 func PostHandler(res http.ResponseWriter, req *http.Request) {
 	str, _ := io.ReadAll(req.Body)
 	encoded := strencoder.Base64Encode(string(str))
-	link := fmt.Sprintf("%s/%s", Cfg.GetServerLINK(), encoded)
+	link := fmt.Sprintf("%s%s", Cfg.GetServerLINK(), encoded)
 	res.Header().Add("content-type", "text/plain")
 	res.WriteHeader(http.StatusCreated)
-	var _, err = res.Write([]byte(fmt.Sprintf("%v", link)))
+	var _, err = res.Write([]byte(link))
 	if err != nil {
 		return
 	}
@@ -53,6 +59,6 @@ func GetHandler(res http.ResponseWriter, req *http.Request) {
 		BadRequestHandler(res, req)
 	}
 	res.Header().Add("content-type", "text/plain")
-	res.Header().Add("Location", str)
+	res.Header().Add("Location", string(str))
 	res.WriteHeader(http.StatusTemporaryRedirect)
 }
