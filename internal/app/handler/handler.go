@@ -24,7 +24,11 @@ type DecodedData struct {
 func GetRouter(cfg config.Config) *chi.Mux {
 	Cfg = cfg
 	router := chi.NewRouter()
-	router.Get(fmt.Sprintf("/%s/{uid}", config.GetAPIPrefixString(Cfg.APIPrefix)), GetHandler)
+	fmt.Printf("/%s{uid}", config.GetAPIPrefixString(Cfg.APIPrefix))
+	fmt.Println("!!!")
+	fmt.Printf("/%s", config.GetAPIPrefixString(Cfg.APIPrefix))
+	fmt.Println("!!!")
+	router.Get(fmt.Sprintf("/%s{uid}", config.GetAPIPrefixString(Cfg.APIPrefix)), GetHandler)
 	router.Post(fmt.Sprintf("/%s", config.GetAPIPrefixString(Cfg.APIPrefix)), PostHandler)
 	router.NotFound(BadRequestHandler)
 	router.MethodNotAllowed(BadRequestHandler)

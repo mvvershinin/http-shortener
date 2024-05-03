@@ -1,13 +1,14 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"strings"
 )
 
-const ServerProtocol = "http://"
-const ServerAddress = "localhost:8080"
-const APIPrefix = ""
+var ServerProtocol = "http://"
+var ServerAddress = "localhost:8080"
+var APIPrefix = ""
 
 type Config struct {
 	ServerProtocol string
@@ -20,10 +21,14 @@ func (c Config) GetServerLINK() string {
 }
 
 func GetConfig() Config {
+	flag.StringVar(&ServerAddress, "a", ServerAddress, "The address and port to listen on")
+	flag.StringVar(&APIPrefix, "b", APIPrefix, "Api prefix to listen on")
+	flag.Parse()
+
 	c := Config{
 		ServerProtocol: ServerProtocol,
 		ServerAddress:  ServerAddress,
-		APIPrefix:      APIPrefix,
+		APIPrefix:      strings.Trim(APIPrefix, "/"),
 	}
 
 	return c
@@ -31,7 +36,7 @@ func GetConfig() Config {
 
 func GetAPIPrefixString(prefix string) string {
 	if len(prefix) > 1 {
-		return strings.Trim(prefix, "/")
+		return prefix + "/"
 	} else {
 		return ""
 	}
