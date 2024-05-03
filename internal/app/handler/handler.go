@@ -7,6 +7,7 @@ import (
 	"github.com/mvvershinin/http-shortener/internal/app/strencoder"
 	"io"
 	"net/http"
+	"path"
 )
 
 const errorMessage = "Bad Request: Something wrong happened."
@@ -16,12 +17,10 @@ var Cfg config.Config
 func GetRouter(cfg config.Config) *chi.Mux {
 	Cfg = cfg
 	router := chi.NewRouter()
-	fmt.Printf("/%s{uid}", config.GetAPIPrefixString(Cfg.APIPrefix))
-	fmt.Println("!!!")
-	fmt.Printf("/%s", config.GetAPIPrefixString(Cfg.APIPrefix))
-	fmt.Println("!!!")
-	router.Get(fmt.Sprintf("/%s{uid}", config.GetAPIPrefixString(Cfg.APIPrefix)), GetHandler)
-	router.Post(fmt.Sprintf("/%s", Cfg.APIPrefix), PostHandler)
+	router.Route(fmt.Sprintf("%s", Cfg.APIPrefix), func(r chi.Router) {
+		r.Get("/{uid}", GetHandler)
+		r.Post("/", PostHandler)
+	})
 	router.NotFound(BadRequestHandler)
 	router.MethodNotAllowed(BadRequestHandler)
 
@@ -29,8 +28,6 @@ func GetRouter(cfg config.Config) *chi.Mux {
 }
 
 func BadRequestHandler(res http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Host)
-	fmt.Println(r.URL)
 	res.WriteHeader(http.StatusBadRequest)
 	_, err := res.Write([]byte(errorMessage))
 	if err != nil {
@@ -41,7 +38,7 @@ func BadRequestHandler(res http.ResponseWriter, r *http.Request) {
 func PostHandler(res http.ResponseWriter, req *http.Request) {
 	str, _ := io.ReadAll(req.Body)
 	encoded := strencoder.Base64Encode(string(str))
-	link := fmt.Sprintf("%s%s", Cfg.GetServerLINK(), encoded)
+	link := Cfg.ServerProtocol + path.Join(Cfg.GetServerPath(), encoded)
 	res.Header().Add("content-type", "text/plain")
 	res.WriteHeader(http.StatusCreated)
 	var _, err = res.Write([]byte(link))

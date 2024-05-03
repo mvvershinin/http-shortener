@@ -19,13 +19,14 @@ func TestHandlerGetSuccess(t *testing.T) {
 	cfg := config.Config{
 		ServerProtocol: "http://",
 		ServerAddress:  "localhost:8080",
-		APIPrefix:      "",
+		APIPrefix:      "/",
 	}
 	router := handler.GetRouter(cfg)
 	ts := httptest.NewServer(router)
 	defer ts.Close()
 
 	testCases := []struct {
+		name                   string
 		method                 string
 		path                   string
 		expectedCode           int
@@ -33,6 +34,7 @@ func TestHandlerGetSuccess(t *testing.T) {
 		expectedHeaderLocation string
 	}{
 		{
+			name:                   "success GET redirect link",
 			method:                 http.MethodGet,
 			path:                   "aHR0cHM6Ly95YW5kZXgucnUv",
 			expectedCode:           http.StatusTemporaryRedirect,
@@ -42,7 +44,7 @@ func TestHandlerGetSuccess(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.method, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			r := httptest.NewRequest(tc.method, "/", nil)
 			w := httptest.NewRecorder()
 			rctx := chi.NewRouteContext()
@@ -63,17 +65,18 @@ func TestHandlerPostSuccess(t *testing.T) {
 	cfg := config.Config{
 		ServerProtocol: "http://",
 		ServerAddress:  "localhost:8080",
-		APIPrefix:      "",
+		APIPrefix:      "/",
 	}
 	router := handler.GetRouter(cfg)
 	ts := httptest.NewServer(router)
 	defer ts.Close()
 
-	requestBody := "hsttps://yandex.ru/"
+	requestBody := "https://yandex.ru/"
 	str := base64.StdEncoding.EncodeToString([]byte(requestBody))
 	successBody := cfg.GetServerLINK() + str
 	contentType := "text/plain"
 	testCases := []struct {
+		name                string
 		method              string
 		requestBody         string
 		expectedCode        int
@@ -81,6 +84,7 @@ func TestHandlerPostSuccess(t *testing.T) {
 		expectedBody        string
 	}{
 		{
+			name:                "success POST get redirect link",
 			method:              http.MethodPost,
 			requestBody:         requestBody,
 			expectedCode:        http.StatusCreated,
@@ -90,7 +94,7 @@ func TestHandlerPostSuccess(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.method, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			r := httptest.NewRequest(tc.method, "/", strings.NewReader(tc.requestBody))
 			w := httptest.NewRecorder()
 
@@ -105,7 +109,7 @@ func TestHandlerPostSuccess(t *testing.T) {
 	}
 }
 
-func TestErrorsWebhook(t *testing.T) {
+func TestErrors(t *testing.T) {
 	testCases := []struct {
 		method              string
 		path                string
@@ -120,7 +124,7 @@ func TestErrorsWebhook(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.method, func(t *testing.T) {
+		t.Run("method not allowed "+tc.method, func(t *testing.T) {
 			r := httptest.NewRequest(tc.method, "/", nil)
 			w := httptest.NewRecorder()
 

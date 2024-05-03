@@ -8,7 +8,7 @@ import (
 
 var ServerProtocol = "http://"
 var ServerAddress = "localhost:8080"
-var APIPrefix = ""
+var APIPrefix = "/"
 
 type Config struct {
 	ServerProtocol string
@@ -16,8 +16,12 @@ type Config struct {
 	APIPrefix      string
 }
 
+func (c Config) GetServerPath() string {
+	return fmt.Sprintf("%s%s", c.ServerAddress, c.APIPrefix)
+}
+
 func (c Config) GetServerLINK() string {
-	return fmt.Sprintf("%s%s/%s", c.ServerProtocol, c.ServerAddress, GetAPIPrefixString(c.APIPrefix))
+	return fmt.Sprintf("%s%s%s", c.ServerProtocol, c.ServerAddress, c.APIPrefix)
 }
 
 func GetConfig() Config {
@@ -28,16 +32,8 @@ func GetConfig() Config {
 	c := Config{
 		ServerProtocol: ServerProtocol,
 		ServerAddress:  ServerAddress,
-		APIPrefix:      strings.Trim(APIPrefix, "/"),
+		APIPrefix:      "/" + strings.Trim(APIPrefix, "/"),
 	}
 
 	return c
-}
-
-func GetAPIPrefixString(prefix string) string {
-	if len(prefix) > 1 {
-		return prefix + "/"
-	} else {
-		return ""
-	}
 }
